@@ -1,0 +1,6 @@
+id=hdr_video_tegu
+name=Pixel 9a HLG HDR video
+version=v1.0.0
+versionCode=14
+author=local build
+description=Enables 10-bit HLG HDR video on the Pixel 9a (tegu), build CP4A.261105.040.A1 ONLY. Overlays HLG tuning graphs + a patched camera HAL lib (advertises HLG10 + force-passes the HAL stream-config gate), unlocks EdgeTPU for the bundled app, and installs a patched Pixel Camera as a separate app "Camera HDR" (pkg com.google.android.Gcam10BitHdr) exposing the HDR video toggle. Runtime bind-mounts only; nothing on /vendor or the APEX image is written. Refuses to install on any other build, and stays inert (auto-disables) if it survives an OTA to a different build.

@@ -1,0 +1,46 @@
+# Never commit Google / proprietary binaries or signing material.
+# This project is source-only; build artifacts are produced from your own device.
+
+# Proprietary camera binaries & tuning (build from your own OTA)
+*.so
+*.apk
+*.apks
+*.apkm
+*.dex
+*.binarypb
+*.pb
+
+# Camera HAL payloads / patched libs if placed in the tree
+module/camera_hlg/
+module/gcam/
+module/patch/
+
+# Signing material — keep your keys private
+*.keystore
+*.jks
+*.der
+*.pem
+*.p12
+*.key
+
+# Build output
+dist/
+*.zip
+
+# Device dumps / OTA extracts / RE working dirs (often contain personal data)
+phone_pull/
+downloads/
+ghidra/proj*/
+ghidra/cache*/
+ghidra/settings*/
+ghidra/out/
+*.charonly
+
+# Media samples (attach to releases/posts instead of committing large files)
+*.mp4
+*.mov
+
+# Misc
+__pycache__/
+*.pyc
+.DS_Store

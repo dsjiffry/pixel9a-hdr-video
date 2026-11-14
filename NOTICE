@@ -1,0 +1,19 @@
+NOTICE
+======
+
+This repository contains ONLY original scripts and documentation (the "Software"),
+licensed under the MIT License (see LICENSE).
+
+It contains NO Google or third-party proprietary binaries — no camera HAL libraries
+(e.g. liblyric_hwl.so), no camera tuning data (.binarypb graphs, fallback maps), and
+no Pixel Camera application (APK/splits). The MIT license covers the scripts and docs
+only.
+
+The build process these scripts describe modifies Google's proprietary, copyrighted
+software (the Pixel camera HAL, its tuning data, and the Pixel Camera app). Those files
+are NOT redistributed here. To use this project you must obtain and patch those files on
+your OWN device, from your own phone image and OTA. Do not redistribute the patched
+binaries you produce.
+
+"Pixel", "Google", and related marks are trademarks of Google LLC. This project is not
+affiliated with, endorsed by, or sponsored by Google.
