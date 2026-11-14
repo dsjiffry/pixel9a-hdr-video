@@ -53,13 +53,35 @@ want the files without touching the phone, or to line up a specific build.
 
 ---
 
-## 1. Pull your own camera files
+## 1. Get your own camera files (from the OTA, or live from the phone)
 
-From your 9a: the camera HAL APEX `com.google.pixel.camera.hal` →
-- `etc/lib64/camera/` (tuning dir, incl. `tegu_fallback_map.binarypb`)
-- `lib64/liblyric_hwl.so` (stock HAL lib — the patch target)
+From the camera HAL APEX `com.google.pixel.camera.hal` you need:
+- `lib64/liblyric_hwl.so` — the stock HAL lib (the patch target), and
+- `etc/lib64/camera/` — the tuning dir (incl. `tegu_fallback_map.binarypb`),
 
-From the matching Fold OTA: extract its `etc/lib64/camera/` (HLG graph donor).
+plus the same `etc/lib64/camera/` from the matching **Fold (comet)** build (the HLG-graph donor).
+
+**Option A — straight from the OTA/factory zip (no phone needed).** This is the easiest way to line
+up an exact build, and the only way to get the Fold's files if you don't own one:
+1. Unzip the download. If it's a full OTA, run `payload-dumper-go payload.bin` (or AOSP
+   `payload_dumper`) to get the partition images; if the images are packed in a `super.img`, run
+   `lpunpack super.img` to split out `system.img` / `system_ext.img` / `vendor.img`.
+2. The camera HAL APEX sits inside one of those partitions as
+   `.../apex/com.google.pixel.camera.hal.apex` (or `.capex`, a compressed APEX). Read the partition
+   image (mount read-only, `debugfs`, or 7-Zip) and pull the APEX file out.
+3. `deapexer extract com.google.pixel.camera.hal.apex out/` — it handles the `.capex` decompression
+   and the inner `apex_payload.img`, leaving you `out/lib64/liblyric_hwl.so` and
+   `out/etc/lib64/camera/`. Do this for **both** the `tegu` and the `comet` OTA.
+
+**Option B — live from a rooted phone (quickest if you have it):**
+
+```
+adb exec-out "su -c 'cat /apex/com.google.pixel.camera.hal/lib64/liblyric_hwl.so'" > liblyric_hwl.so
+adb exec-out "su -c 'tar -C /apex/com.google.pixel.camera.hal/etc/lib64 -cf - camera'" > camera.tar
+```
+
+(The Fold's `etc/lib64/camera/` almost always comes from its OTA via Option A, since you likely
+don't have a Fold to pull from.)
 
 ## 2. Graft the HLG tuning graphs
 
