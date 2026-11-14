@@ -17,8 +17,6 @@ verified on-device (`ffprobe` a sample and see for yourself).
 - ⚠️ Build-locked. Reference build is `CP4A.261105.040.A1`; every offset and the app patch must be
   re-derived per OTA. The module refuses to install on any other build and self-disables if it
   survives an OTA.
-- ❌ 4K Active stabilization — not achievable (Google caps Active at 1080p across the whole Pixel 9
-  line, 9 Pro included). It's 4K+HDR *or* 1080p+Active.
 - ⚠️ No dedicated 9a HDR-video white-balance tuning, so color can be slightly off.
 
 ## How it works (short version)
