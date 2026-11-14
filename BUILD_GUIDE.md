@@ -38,9 +38,15 @@ Match everything to **your** phone's exact build. Download from the official sou
 - **Pixel factory images** (alternative, full image incl. vendor):
   <https://developers.google.com/android/images>
 - **Pixel Camera / Google Camera APK + splits** (if you'd rather not pull it off the device):
-  APKMirror — <https://www.apkmirror.com/apk/google-inc/camera/>. Download the version that
-  matches what's installed on your phone (use the "bundle"/split download so you get `base.apk`
-  plus all the split APKs).
+  APKMirror — <https://www.apkmirror.com/apk/google-inc/camera/>. The reference patch in this
+  guide targets **Google Camera `10.4.117`** (full versionName `10.4.117.936816638.14`,
+  versionCode `69481630`) — the version that shipped on `CP4A.261105.040.A1`. Download the
+  "bundle"/split download so you get `base.apk` plus all the split APKs.
+
+> **This version tracks the OTA.** A new build may ship a newer Pixel Camera, and the smali method
+> you patch (`htb.o`) can move or change between versions. For each new OTA: check the Pixel Camera
+> version on your phone (`dumpsys package com.google.android.GoogleCamera | grep versionName`), grab
+> that same version, and re-locate the amethyst flag whitelist before patching (see Step 5).
 
 Pull-from-device is still the surest way to match versions; the links above are for when you
 want the files without touching the phone, or to line up a specific build.
@@ -112,8 +118,9 @@ Trade-off: while enabled it opens EdgeTPU to any app.
 
 Stock Pixel Camera hides the HDR-video ("amethyst") toggle on tegu. Get the Pixel Camera APK set
 (`base.apk` + splits) either by pulling it from your device (`pm path com.google.android.GoogleCamera`
-→ `adb pull`) or from APKMirror (<https://www.apkmirror.com/apk/google-inc/camera/>, matching your
-installed version). Decode **your** `base.apk` **sources-only**:
+→ `adb pull`) or from APKMirror (<https://www.apkmirror.com/apk/google-inc/camera/> — the reference
+build used Google Camera `10.4.117`, versionCode `69481630`; match whatever is on your phone).
+Decode **your** `base.apk` **sources-only**:
 
 ```
 apktool d -r base.apk -o base_src
