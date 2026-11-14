@@ -14,6 +14,41 @@ is something an agent is good at).
 
 ---
 
+## Re-locating the patch points on a new build (anchors, not names)
+
+Obfuscation renames the GCam classes/methods (`htb`, `Lhrj`, `Lhqs`, …) and every `liblyric_hwl.so`
+address shifts with each build, so **never reuse the symbol names or offsets from this guide** —
+re-derive them from stable anchors that *don't* change between builds:
+
+- **GCam HDR toggle:** the flag strings `camcorder.amethyst` and `camcorder.amethyst_opt`.
+- **HAL validator (Step 3b):** the log string `ValidateStreams failed, camera_id:`.
+- **HAL characteristics (Step 3a):** Android tag `0xC0013` (`ANDROID_REQUEST_AVAILABLE_DYNAMIC_RANGE_PROFILES_MAP`).
+
+Minimal-token hunt — in each case it's *string → single xref → patch the function tail*, a couple of
+RE calls, not a full-binary sweep:
+
+1. **GCam toggle (Step 5):** `grep` the decoded smali for `camcorder.amethyst` → the two flag fields
+   (their class is `Lhrj` here but will differ). Then find the boolean flag-evaluator that
+   early-returns `true` for a small hard-coded whitelist of flag objects — it's the method the
+   toggle's visibility check calls (`htb.o(Lhqs;)Z` here). Add your two fields to that whitelist.
+   Match by **structure** (`sget-object` compares against each flag → a `:cond` that does
+   `const/4 p0, 0x1; return p0`), never by the obfuscated name, which changes every build.
+2. **HAL validator (Step 3b):** string-search `liblyric_hwl.so` for `ValidateStreams failed, camera_id:`,
+   follow the one code xref to its function, and NOP the final conditional branch at the function
+   tail that routes to the `-22` return (a `tbz`/`cbz` on the validity flag here). File offset =
+   Ghidra vaddr − `0x100000`.
+3. **HAL characteristics (Step 3a):** locate the HWL `GetCameraCharacteristics` routine — the one
+   that serializes the static camera metadata (it's the function whose output you augment; no stable
+   name, but it's reachable from the camera-device-session HWL vtable). Find a code cave, and detour
+   it to append the `TEN_BIT` capability + a `0xC0013` map `{STANDARD, HLG10}` +
+   `recommendedTenBit = HLG10`, gated to `LENS_FACING == BACK`.
+
+An RE agent driving Ghidra headless (or an MCP reverse-engineering tool) can do each of these in 1–2
+calls: pull the string, jump to its one xref, read the function tail, apply the patch. Don't
+enumerate the whole binary.
+
+---
+
 ## 0. What you need
 
 - Pixel 9a (**tegu**), KernelSU (root via `su`).
