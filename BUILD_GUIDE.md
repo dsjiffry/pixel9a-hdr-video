@@ -28,6 +28,23 @@ is something an agent is good at).
 
 The helper scripts referenced below are in this repo (`tools/`, `ghidra/scripts/`, `module/`).
 
+### Where to download the inputs
+
+Match everything to **your** phone's exact build. Download from the official sources:
+
+- **Pixel full OTA images** (contains the camera HAL APEX → `liblyric_hwl.so` + tuning):
+  <https://developers.google.com/android/ota> — grab your `tegu` build, and the **matching**
+  `comet` (Pixel Fold) build for the HLG-graph donor.
+- **Pixel factory images** (alternative, full image incl. vendor):
+  <https://developers.google.com/android/images>
+- **Pixel Camera / Google Camera APK + splits** (if you'd rather not pull it off the device):
+  APKMirror — <https://www.apkmirror.com/apk/google-inc/camera/>. Download the version that
+  matches what's installed on your phone (use the "bundle"/split download so you get `base.apk`
+  plus all the split APKs).
+
+Pull-from-device is still the surest way to match versions; the links above are for when you
+want the files without touching the phone, or to line up a specific build.
+
 ---
 
 ## 1. Pull your own camera files
@@ -93,8 +110,10 @@ Trade-off: while enabled it opens EdgeTPU to any app.
 
 ## 5. Patch the Pixel Camera app (show the HDR-video toggle)
 
-Stock Pixel Camera hides the HDR-video ("amethyst") toggle on tegu. Decode **your** Pixel Camera
-`base.apk` **sources-only**:
+Stock Pixel Camera hides the HDR-video ("amethyst") toggle on tegu. Get the Pixel Camera APK set
+(`base.apk` + splits) either by pulling it from your device (`pm path com.google.android.GoogleCamera`
+→ `adb pull`) or from APKMirror (<https://www.apkmirror.com/apk/google-inc/camera/>, matching your
+installed version). Decode **your** `base.apk` **sources-only**:
 
 ```
 apktool d -r base.apk -o base_src
@@ -163,10 +182,6 @@ Expect: `hevc (Main 10)`, `yuv420p10le`, `color_transfer=arib-std-b67` (HLG), `b
 - **Color:** the 9a has no dedicated HDR-video auto-white-balance tuning (that ships compiled into
   the Fold's libs only), so HDR color can be slightly off.
 - **Lenses/modes:** rear main + ultrawide only; no front camera, no 24fps HLG.
-- **4K Active stabilization is not achievable** — and not because of this mod. Google limits
-  "Active" stabilization to 1080p across the entire Pixel 9 line (the 9 Pro included; see the
-  official spec pages). 4K gets Standard/Locked, same as stock. So it's 4K+HDR *or* 1080p+Active,
-  not both.
 
 ## Legal / redistribution
 
